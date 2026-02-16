@@ -91,7 +91,6 @@ void main() {
       final effects = <RevealEffect>[
         RevealEffects.circular(),
         RevealEffects.fade(),
-        RevealEffects.scale(),
         RevealEffects.slide(),
       ];
 
