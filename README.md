@@ -1,70 +1,42 @@
-# ui_reveal
+Snapshot-based UI transitions for Flutter with pluggable reveal effects.
 
-`ui_reveal` is a Flutter package that animates UI switches using snapshot-based reveal effects.
-It is package-agnostic and exposes a minimal API built around `RevealHost`, `RevealController`, and `RevealEffect`.
+`ui_reveal` captures the previous frame, runs your UI switch exactly once, and animates the transition using an effect strategy.</br>
+Most often used to bring a little magic to your theme switching 🙌
 
-## Features
+## Table of Contents
 
-- Host-based snapshot overlay with a clean controller API.
-- Pluggable effects via `RevealEffect` strategy.
-- Built-in effects: `RevealEffects.circular()`, `RevealEffects.fade()`, `RevealEffects.scale()`.
-- Fail-fast runtime checks for invalid usage.
-- Fallback path: if snapshot capture fails, `onSwitch` still runs without animation.
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [API Styles](#api-styles)
+- [Built-in Effects](#built-in-effects)
+- [Direction Handling](#direction-handling)
+- [Custom Effects](#custom-effects)
+- [Theme Switching Notes](#theme-switching-notes)
+- [FAQ](#faq)
 
-## Public API
+## Installation
 
-- `RevealHost`
-- `RevealScope` (high-level wrapper with optional auto controller)
-- `RevealConfig`
-- `RevealController.start(...)`
-- `RevealEffect` / `RevealEffectContext`
-- `RevealDirection` (`reveal`, `conceal`)
-- `BuildContext.revealCenter`
-- `BuildContext.startReveal(...)` (convenience)
-
-## Getting Started
-
-Add dependency:
-
-```yaml
-dependencies:
-  ui_reveal: ^1.0.0
+```bash
+flutter pub add ui_reveal
 ```
 
-Wrap your app content with `RevealHost`:
+## Quick Start
 
-```dart
-final revealController = RevealController();
-
-MaterialApp(
-  builder: (context, child) {
-    return RevealHost(
-      controller: revealController,
-      config: const RevealConfig(
-        duration: Duration(milliseconds: 560),
-        curve: Curves.easeInOut,
-      ),
-      child: child ?? const SizedBox.shrink(),
-    );
-  },
-);
-```
-
-For minimal setup, use `RevealScope`:
+### 1. Add `RevealScope` via `MaterialApp.builder`
 
 ```dart
 MaterialApp(
   builder: (context, child) => RevealScope(
     child: child ?? const SizedBox.shrink(),
   ),
-  home: HomePage(),
+  home: const HomePage(),
 );
 ```
 
-Start transition from a widget center:
+### 2. Trigger transition
 
 ```dart
-await revealController.start(
+await RevealScope.of(context).start(
   center: context.revealCenter,
   effect: RevealEffects.circular(),
   direction: RevealDirection.reveal,
@@ -78,53 +50,52 @@ await revealController.start(
 
 ## API Styles
 
-`RevealScope` gives you two ways to trigger transitions.
-
-### Style A: `RevealScope.of(context)` (recommended)
+### Style A (recommended): `RevealScope.of(context)`
 
 ```dart
+MaterialApp(
+  builder: (context, child) => RevealScope(
+    child: child ?? const SizedBox.shrink(),
+  ),
+  home: const HomePage(),
+);
+
 await RevealScope.of(context).start(
   center: context.revealCenter,
-  effect: RevealEffects.circular(),
+  effect: RevealEffects.fade(),
   direction: RevealDirection.reveal,
-  onSwitch: () async => setState(() => isDark = !isDark),
+  onSwitch: () async => setState(() => isGrid = !isGrid),
 );
 ```
 
-### Style B: `context.startReveal(...)` (shortcut)
+### Style B (shortcut): `context.startReveal(...)`
 
 ```dart
 await context.startReveal(
-  effect: RevealEffects.circular(),
+  effect: RevealEffects.slide(),
   direction: RevealDirection.reveal,
   onSwitch: () async => setState(() => isDark = !isDark),
 );
 ```
 
-## Effects
-
-Use any built-in effect through the same API:
+## Built-in Effects
 
 ```dart
 RevealEffects.circular();
 RevealEffects.fade();
-RevealEffects.scale();
-RevealEffects.circular(enableEdgeGlow: false);
-RevealEffects.scale(maxScale: 1.12);
-```
+RevealEffects.slide();
 
-You can add custom effects by implementing `RevealEffect`.
+RevealEffects.circular(enableEdgeGlow: false);
+RevealEffects.slide(slideDirection: AxisDirection.right, fadeStrength: 0.6);
+```
 
 ## Direction Handling
 
-`ui_reveal` keeps direction explicit in the core API:
+Direction is explicit in the core API:
 
 ```dart
 direction: RevealDirection.reveal // or RevealDirection.conceal
 ```
-
-If you want automatic behavior (`toggle` or `byThemeBrightness`), use
-`RevealDirectionResolver` and keep the selected mode in app-level state.
 
 ### Explicit
 
@@ -137,51 +108,14 @@ await controller.start(
 );
 ```
 
-### Toggle
+## Custom Effects
 
-```dart
-final direction = RevealDirectionResolver.toggle(
-  previousDirection: lastResolvedDirection,
-);
+See real custom transition implementation in
+[`example/lib/pages/custom_page.dart`](example/lib/pages/custom_page.dart) (`_BlindsRevealEffect`).
 
-await controller.start(
-  center: context.revealCenter,
-  effect: RevealEffects.fade(),
-  direction: direction,
-  onSwitch: () async => setState(() => isGrid = !isGrid),
-);
-lastResolvedDirection = direction;
-```
+## Theme Switching Notes
 
-### By Theme Brightness
-
-```dart
-final direction = RevealDirectionResolver.byThemeBrightness(
-  fromBrightness: isDark ? Brightness.dark : Brightness.light,
-  toBrightness: isDark ? Brightness.light : Brightness.dark,
-  fallbackDirection: RevealDirection.reveal,
-);
-
-await controller.start(
-  center: context.revealCenter,
-  effect: RevealEffects.scale(),
-  direction: direction,
-  onSwitch: () async => setState(() => isDark = !isDark),
-);
-```
-
-## Runtime Guarantees
-
-- `RevealController.start` throws `ArgumentError` when `center` is non-finite.
-- `RevealController.start` throws `StateError` when called during an active transition.
-- `RevealController.start` throws `StateError` when controller is not attached to `RevealHost`.
-- `onSwitch` is called exactly once per `start` call.
-
-## Theme Animation Note
-
-When switching `themeMode` inside `onSwitch`, `MaterialApp` also runs its own
-theme transition animation by default. If you want reveal to be the only visible
-animation, set:
+When switching `themeMode`, preferred setup is disabling default theme animation so reveal is the only visible transition:
 
 ```dart
 MaterialApp(
@@ -190,6 +124,13 @@ MaterialApp(
 )
 ```
 
-## Example
+## FAQ
 
-See a complete integration sample in `example/lib/main.dart`.
+### Why is `onSwitch` required?
+`onSwitch` defines the exact state-change point between snapshot capture and transition playback.
+
+### Can I use it without manual controller lifecycle?
+Yes, use `RevealScope` + `RevealScope.of(context)` or `context.startReveal(...)`.
+
+### Can I build my own effect?
+Yes. Implement `RevealEffect` and render from `RevealEffectContext`.

@@ -189,7 +189,7 @@ class _SimplePageState extends State<SimplePage> {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () => context.startReveal(
-          effect: RevealEffects.scale(),
+          effect: RevealEffects.slide(),
           onSwitch: () async => setState(() => _isViewA = !_isViewA),
         ),
         child: Padding(
@@ -217,7 +217,7 @@ class _SimplePageState extends State<SimplePage> {
                     ),
                   ),
                   Text(
-                    'ScaleRevealEffect',
+                    'SlideRevealEffect',
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),

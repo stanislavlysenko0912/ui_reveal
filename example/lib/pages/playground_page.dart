@@ -4,7 +4,7 @@ import 'package:ui_reveal/ui_reveal.dart';
 enum _EffectType {
   circular('Circular'),
   fade('Fade'),
-  scale('Scale');
+  slide('Slide');
 
   const _EffectType(this.label);
 
@@ -16,8 +16,8 @@ enum _EffectType {
         return RevealEffects.circular();
       case _EffectType.fade:
         return RevealEffects.fade();
-      case _EffectType.scale:
-        return RevealEffects.scale();
+      case _EffectType.slide:
+        return RevealEffects.slide();
     }
   }
 }

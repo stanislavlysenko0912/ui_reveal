@@ -66,10 +66,7 @@ class CustomPage extends StatelessWidget {
   }
 
   Future<void> _run(BuildContext triggerContext) {
-    final direction = RevealDirectionResolver.byThemeBrightness(
-      fromBrightness: isDark ? Brightness.dark : Brightness.light,
-      toBrightness: isDark ? Brightness.light : Brightness.dark,
-    );
+    final direction = isDark ? RevealDirection.reveal : RevealDirection.conceal;
 
     return RevealScope.of(triggerContext).start(
       center: triggerContext.revealCenter,

@@ -5,51 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ui_reveal/ui_reveal.dart';
 
 void main() {
-  group('RevealDirectionResolver', () {
-    test('toggle returns opposite direction', () {
-      expect(
-        RevealDirectionResolver.toggle(
-          previousDirection: RevealDirection.reveal,
-        ),
-        RevealDirection.conceal,
-      );
-      expect(
-        RevealDirectionResolver.toggle(
-          previousDirection: RevealDirection.conceal,
-        ),
-        RevealDirection.reveal,
-      );
-    });
-
-    test('byThemeBrightness resolves darker and lighter targets', () {
-      expect(
-        RevealDirectionResolver.byThemeBrightness(
-          fromBrightness: Brightness.light,
-          toBrightness: Brightness.dark,
-        ),
-        RevealDirection.reveal,
-      );
-      expect(
-        RevealDirectionResolver.byThemeBrightness(
-          fromBrightness: Brightness.dark,
-          toBrightness: Brightness.light,
-        ),
-        RevealDirection.conceal,
-      );
-    });
-
-    test('byThemeBrightness returns fallback when brightness is unchanged', () {
-      expect(
-        RevealDirectionResolver.byThemeBrightness(
-          fromBrightness: Brightness.dark,
-          toBrightness: Brightness.dark,
-          fallbackDirection: RevealDirection.conceal,
-        ),
-        RevealDirection.conceal,
-      );
-    });
-  });
-
   group('RevealController', () {
     test('throws StateError when host is not attached', () async {
       final controller = RevealController();
@@ -137,6 +92,7 @@ void main() {
         RevealEffects.circular(),
         RevealEffects.fade(),
         RevealEffects.scale(),
+        RevealEffects.slide(),
       ];
 
       for (final effect in effects) {
