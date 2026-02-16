@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ui_reveal/ui_reveal.dart';
 
+import 'demo_data.dart';
+import 'widgets/demo_action_card.dart';
+import 'widgets/effect_settings.dart';
+import 'widgets/preview_panel.dart';
+
 void main() {
   runApp(const RevealDemoApp());
 }
@@ -18,12 +23,15 @@ class _RevealDemoAppState extends State<RevealDemoApp> {
   bool _isGridLayout = false;
   int _paletteIndex = 0;
   DemoEffectType _effectType = DemoEffectType.circular;
-  RevealDirection _direction = RevealDirection.reveal;
+  RevealDirectionMode _directionMode = RevealDirectionMode.explicit;
+  RevealDirection _explicitDirection = RevealDirection.reveal;
+  RevealDirection _lastResolvedDirection = RevealDirection.conceal;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      themeAnimationDuration: Duration.zero,
       themeMode: _isDarkTheme ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         useMaterial3: true,
@@ -42,125 +50,163 @@ class _RevealDemoAppState extends State<RevealDemoApp> {
           child: child ?? const SizedBox.shrink(),
         );
       },
-      home: Builder(builder: (_) => _buildHome()),
+      home: Builder(builder: (homeContext) => _buildHome(homeContext)),
     );
   }
 
-  Widget _buildHome() {
+  Widget _buildHome(BuildContext homeContext) {
+    final theme = Theme.of(homeContext);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('ui_reveal examples')),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
           children: [
-            _buildSelectors(),
-            const SizedBox(height: 16),
-            _buildActionCard(
-              title: 'Theme switch',
-              subtitle: 'Toggle between light and dark themes.',
+            EffectSettings(
+              effectType: _effectType,
+              directionMode: _directionMode,
+              direction: _explicitDirection,
+              onEffectChanged: (v) => setState(() => _effectType = v),
+              onDirectionModeChanged: (v) => setState(() => _directionMode = v),
+              onDirectionChanged: (v) => setState(() => _explicitDirection = v),
+            ),
+            const SizedBox(height: 20),
+            _buildSectionHeader(theme, 'Transitions'),
+            const SizedBox(height: 8),
+            _buildThemeToggleCard(colorScheme),
+            const SizedBox(height: 12),
+            _buildLayoutToggleCard(colorScheme),
+            const SizedBox(height: 12),
+            _buildPaletteCard(theme, colorScheme),
+            const SizedBox(height: 24),
+            _buildSectionHeader(theme, 'Preview'),
+            const SizedBox(height: 8),
+            PreviewPanel(isGridLayout: _isGridLayout),
+          ],
+        ),
+      ),
+      floatingActionButton: Builder(
+        builder: (fabContext) {
+          return FloatingActionButton(
+            onPressed: () => _runReveal(
+              triggerContext: fabContext,
               onSwitch: () => setState(() => _isDarkTheme = !_isDarkTheme),
             ),
-            const SizedBox(height: 12),
-            _buildActionCard(
-              title: 'Layout switch',
-              subtitle: 'Switch list/grid presentation.',
-              onSwitch: () => setState(() => _isGridLayout = !_isGridLayout),
+            tooltip: 'Toggle theme',
+            child: Icon(
+              _isDarkTheme ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
             ),
-            const SizedBox(height: 12),
-            _buildActionCard(
-              title: 'Palette switch',
-              subtitle: 'Cycle app color seed.',
-              onSwitch: () => setState(_cyclePalette),
-            ),
-            const SizedBox(height: 16),
-            _PreviewPanel(isGridLayout: _isGridLayout),
-          ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(ThemeData theme, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        title,
+        style: theme.textTheme.titleMedium?.copyWith(
+          color: theme.colorScheme.onSurface,
         ),
       ),
     );
   }
 
-  Widget _buildSelectors() {
-    return Card(
+  Widget _buildThemeToggleCard(ColorScheme colorScheme) {
+    return DemoActionCard(
+      title: 'Theme',
+      subtitle: _isDarkTheme ? 'Dark mode active' : 'Light mode active',
+      badge: _isDarkTheme ? 'Dark' : 'Light',
+      badgeColor: colorScheme.tertiaryContainer,
+      badgeTextColor: colorScheme.onTertiaryContainer,
+      onRun: (ctx) => _runReveal(
+        triggerContext: ctx,
+        nextBrightness: _isDarkTheme ? Brightness.light : Brightness.dark,
+        onSwitch: () => setState(() => _isDarkTheme = !_isDarkTheme),
+      ),
+    );
+  }
+
+  Widget _buildLayoutToggleCard(ColorScheme colorScheme) {
+    return DemoActionCard(
+      title: 'Layout',
+      subtitle: _isGridLayout ? 'Grid presentation' : 'List presentation',
+      badge: _isGridLayout ? 'Grid' : 'List',
+      badgeColor: colorScheme.secondaryContainer,
+      badgeTextColor: colorScheme.onSecondaryContainer,
+      onRun: (ctx) => _runReveal(
+        triggerContext: ctx,
+        onSwitch: () => setState(() => _isGridLayout = !_isGridLayout),
+      ),
+    );
+  }
+
+  Widget _buildPaletteCard(ThemeData theme, ColorScheme colorScheme) {
+    return Card.outlined(
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
           children: [
-            Text(
-              'Reveal settings',
-              style: Theme.of(context).textTheme.titleMedium,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Color Palette',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  Text(
+                    'Tap a color to switch',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 12),
             Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<DemoEffectType>(
-                    initialValue: _effectType,
-                    decoration: const InputDecoration(labelText: 'Effect'),
-                    items: DemoEffectType.values
-                        .map(
-                          (effectType) => DropdownMenuItem<DemoEffectType>(
-                            value: effectType,
-                            child: Text(effectType.label),
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(paletteSeeds.length, (index) {
+                final isSelected = index == _paletteIndex;
+                final color = paletteSeeds[index];
+                return Padding(
+                  padding: EdgeInsets.only(left: index == 0 ? 0 : 8),
+                  child: Builder(
+                    builder: (dotContext) {
+                      return GestureDetector(
+                        onTap: isSelected
+                            ? null
+                            : () => _runReveal(
+                                triggerContext: dotContext,
+                                onSwitch: () =>
+                                    setState(() => _paletteIndex = index),
+                              ),
+                        child: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: isSelected
+                                ? Border.all(
+                                    color: colorScheme.onSurface,
+                                    width: 3,
+                                  )
+                                : null,
                           ),
-                        )
-                        .toList(growable: false),
-                    onChanged: (value) {
-                      if (value == null) {
-                        return;
-                      }
-                      setState(() => _effectType = value);
+                        ),
+                      );
                     },
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: DropdownButtonFormField<RevealDirection>(
-                    initialValue: _direction,
-                    decoration: const InputDecoration(labelText: 'Direction'),
-                    items: RevealDirection.values
-                        .map(
-                          (direction) => DropdownMenuItem<RevealDirection>(
-                            value: direction,
-                            child: Text(direction.name),
-                          ),
-                        )
-                        .toList(growable: false),
-                    onChanged: (value) {
-                      if (value == null) {
-                        return;
-                      }
-                      setState(() => _direction = value);
-                    },
-                  ),
-                ),
-              ],
+                );
+              }),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionCard({
-    required String title,
-    required String subtitle,
-    required VoidCallback onSwitch,
-  }) {
-    return Card(
-      child: ListTile(
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: Builder(
-          builder: (buttonContext) {
-            return FilledButton(
-              onPressed: () {
-                _runReveal(triggerContext: buttonContext, onSwitch: onSwitch);
-              },
-              child: const Text('Run'),
-            );
-          },
         ),
       ),
     );
@@ -169,99 +215,37 @@ class _RevealDemoAppState extends State<RevealDemoApp> {
   Future<void> _runReveal({
     required BuildContext triggerContext,
     required VoidCallback onSwitch,
+    Brightness? nextBrightness,
   }) {
+    final direction = _resolveDirection(nextBrightness: nextBrightness);
+    _lastResolvedDirection = direction;
     return _revealController.start(
       center: triggerContext.revealCenter,
-      direction: _direction,
+      direction: direction,
       effect: _effectType.effect,
       onSwitch: () async => onSwitch(),
     );
   }
 
-  void _cyclePalette() {
-    _paletteIndex = (_paletteIndex + 1) % _paletteSeeds.length;
-  }
-
-  Color get _currentPaletteSeed => _paletteSeeds[_paletteIndex];
-}
-
-class _PreviewPanel extends StatelessWidget {
-  const _PreviewPanel({required this.isGridLayout});
-
-  final bool isGridLayout;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 260),
-      child: isGridLayout ? const _GridPreview() : const _ListPreview(),
-    );
-  }
-}
-
-class _ListPreview extends StatelessWidget {
-  const _ListPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      key: const ValueKey<String>('list-preview'),
-      children: List.generate(
-        4,
-        (index) => Card(
-          child: ListTile(
-            leading: CircleAvatar(child: Text('${index + 1}')),
-            title: Text('List item ${index + 1}'),
-            subtitle: const Text('Preview content'),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GridPreview extends StatelessWidget {
-  const _GridPreview();
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      key: const ValueKey<String>('grid-preview'),
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: 6,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemBuilder: (context, index) {
-        return DecoratedBox(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Center(child: Text('Tile ${index + 1}')),
+  RevealDirection _resolveDirection({Brightness? nextBrightness}) {
+    switch (_directionMode) {
+      case RevealDirectionMode.explicit:
+        return _explicitDirection;
+      case RevealDirectionMode.toggle:
+        return RevealDirectionResolver.toggle(
+          previousDirection: _lastResolvedDirection,
         );
-      },
-    );
+      case RevealDirectionMode.byThemeBrightness:
+        if (nextBrightness == null) {
+          return _explicitDirection;
+        }
+        return RevealDirectionResolver.byThemeBrightness(
+          fromBrightness: _isDarkTheme ? Brightness.dark : Brightness.light,
+          toBrightness: nextBrightness,
+          fallbackDirection: _explicitDirection,
+        );
+    }
   }
+
+  Color get _currentPaletteSeed => paletteSeeds[_paletteIndex];
 }
-
-enum DemoEffectType {
-  circular('Circular', CircularRevealEffect()),
-  fade('Fade', FadeRevealEffect()),
-  scale('Scale', ScaleRevealEffect());
-
-  const DemoEffectType(this.label, this.effect);
-
-  final String label;
-  final RevealEffect effect;
-}
-
-const List<Color> _paletteSeeds = <Color>[
-  Colors.blue,
-  Colors.teal,
-  Colors.deepOrange,
-  Colors.indigo,
-];

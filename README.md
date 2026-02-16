@@ -75,12 +75,80 @@ const ScaleRevealEffect();
 
 You can add custom effects by implementing `RevealEffect`.
 
+## Direction Handling
+
+`ui_reveal` keeps direction explicit in the core API:
+
+```dart
+direction: RevealDirection.reveal // or RevealDirection.conceal
+```
+
+If you want automatic behavior (`toggle` or `byThemeBrightness`), use
+`RevealDirectionResolver` and keep the selected mode in app-level state.
+
+### Explicit
+
+```dart
+await controller.start(
+  center: context.revealCenter,
+  effect: const CircularRevealEffect(),
+  direction: RevealDirection.conceal,
+  onSwitch: () async => setState(() => isDark = false),
+);
+```
+
+### Toggle
+
+```dart
+final direction = RevealDirectionResolver.toggle(
+  previousDirection: lastResolvedDirection,
+);
+
+await controller.start(
+  center: context.revealCenter,
+  effect: const FadeRevealEffect(),
+  direction: direction,
+  onSwitch: () async => setState(() => isGrid = !isGrid),
+);
+lastResolvedDirection = direction;
+```
+
+### By Theme Brightness
+
+```dart
+final direction = RevealDirectionResolver.byThemeBrightness(
+  fromBrightness: isDark ? Brightness.dark : Brightness.light,
+  toBrightness: isDark ? Brightness.light : Brightness.dark,
+  fallbackDirection: RevealDirection.reveal,
+);
+
+await controller.start(
+  center: context.revealCenter,
+  effect: const ScaleRevealEffect(),
+  direction: direction,
+  onSwitch: () async => setState(() => isDark = !isDark),
+);
+```
+
 ## Runtime Guarantees
 
 - `RevealController.start` throws `ArgumentError` when `center` is non-finite.
 - `RevealController.start` throws `StateError` when called during an active transition.
 - `RevealController.start` throws `StateError` when controller is not attached to `RevealHost`.
 - `onSwitch` is called exactly once per `start` call.
+
+## Theme Animation Note
+
+When switching `themeMode` inside `onSwitch`, `MaterialApp` also runs its own
+theme transition animation by default. If you want reveal to be the only visible
+animation, set:
+
+```dart
+MaterialApp(
+  themeAnimationDuration: Duration.zero,
+  // ...
+)
+```
 
 ## Example
 
