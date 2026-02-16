@@ -85,9 +85,11 @@ RevealEffects.circular();
 RevealEffects.fade();
 RevealEffects.slide();
 RevealEffects.diagonalWipe();
+RevealEffects.liquidWave();
 
 RevealEffects.circular(enableEdgeGlow: false);
 RevealEffects.slide(slideDirection: AxisDirection.right, fadeStrength: 0.6);
+RevealEffects.liquidWave(slideDirection: AxisDirection.up, amplitude: 20);
 ```
 
 ## Direction Handling

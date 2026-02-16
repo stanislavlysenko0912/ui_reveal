@@ -88,12 +88,7 @@ void main() {
       );
 
       final center = key.currentContext!.revealCenter;
-      final effects = <RevealEffect>[
-        RevealEffects.circular(),
-        RevealEffects.diagonalWipe(),
-        RevealEffects.fade(),
-        RevealEffects.slide(),
-      ];
+      final effects = RevealEffects.all();
 
       for (final effect in effects) {
         var switchCalls = 0;

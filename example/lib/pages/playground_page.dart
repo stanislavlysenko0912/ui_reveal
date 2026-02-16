@@ -5,6 +5,7 @@ enum _EffectType {
   circular('Circular'),
   diagonalWipe('Diagonal Wipe'),
   fade('Fade'),
+  liquidWave('Liquid Wave'),
   slide('Slide');
 
   const _EffectType(this.label);
@@ -19,6 +20,8 @@ enum _EffectType {
         return RevealEffects.diagonalWipe();
       case _EffectType.fade:
         return RevealEffects.fade();
+      case _EffectType.liquidWave:
+        return RevealEffects.liquidWave();
       case _EffectType.slide:
         return RevealEffects.slide();
     }
@@ -105,15 +108,30 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           children: [
             Text('Effect', style: theme.textTheme.labelLarge),
             const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: SegmentedButton<_EffectType>(
-                segments: _EffectType.values
-                    .map((e) => ButtonSegment(value: e, label: Text(e.label)))
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                border: Border.all(color: colorScheme.outlineVariant),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: DropdownButton<_EffectType>(
+                value: _effectType,
+                isExpanded: true,
+                underline: const SizedBox.shrink(),
+                items: _EffectType.values
+                    .map(
+                      (effect) => DropdownMenuItem<_EffectType>(
+                        value: effect,
+                        child: Text(effect.label),
+                      ),
+                    )
                     .toList(),
-                selected: {_effectType},
-                onSelectionChanged: (s) =>
-                    setState(() => _effectType = s.first),
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+                  setState(() => _effectType = value);
+                },
               ),
             ),
             const SizedBox(height: 16),

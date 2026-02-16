@@ -30,7 +30,7 @@ class RealWorldPage extends StatelessWidget {
                     direction: isDark
                         ? RevealDirection.reveal
                         : RevealDirection.conceal,
-                    effect: RevealEffects.diagonalWipe(),
+                    effect: RevealEffects.liquidWave(),
                     onSwitch: () async => onToggleTheme(),
                   );
                 },
