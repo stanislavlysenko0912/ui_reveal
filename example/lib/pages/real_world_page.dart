@@ -16,6 +16,7 @@ class RealWorldPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -29,7 +30,7 @@ class RealWorldPage extends StatelessWidget {
                     direction: isDark
                         ? RevealDirection.reveal
                         : RevealDirection.conceal,
-                    effect: RevealEffects.circular(),
+                    effect: RevealEffects.diagonalWipe(),
                     onSwitch: () async => onToggleTheme(),
                   );
                 },

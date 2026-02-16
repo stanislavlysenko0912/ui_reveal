@@ -84,6 +84,7 @@ await context.startReveal(
 RevealEffects.circular();
 RevealEffects.fade();
 RevealEffects.slide();
+RevealEffects.diagonalWipe();
 
 RevealEffects.circular(enableEdgeGlow: false);
 RevealEffects.slide(slideDirection: AxisDirection.right, fadeStrength: 0.6);

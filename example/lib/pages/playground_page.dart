@@ -3,6 +3,7 @@ import 'package:ui_reveal/ui_reveal.dart';
 
 enum _EffectType {
   circular('Circular'),
+  diagonalWipe('Diagonal Wipe'),
   fade('Fade'),
   slide('Slide');
 
@@ -14,6 +15,8 @@ enum _EffectType {
     switch (this) {
       case _EffectType.circular:
         return RevealEffects.circular();
+      case _EffectType.diagonalWipe:
+        return RevealEffects.diagonalWipe();
       case _EffectType.fade:
         return RevealEffects.fade();
       case _EffectType.slide:

@@ -2,6 +2,7 @@ import 'package:flutter/painting.dart';
 
 import '../core/reveal_core.dart';
 import 'circular_reveal_effect.dart';
+import 'diagonal_wipe_reveal_effect.dart';
 import 'fade_reveal_effect.dart';
 import 'slide_reveal_effect.dart';
 
@@ -32,8 +33,16 @@ final class RevealEffects {
     );
   }
 
+  /// Diagonal wipe reveal effect factory.
+  static DiagonalWipeRevealEffect diagonalWipe({
+    DiagonalWipeDirection direction =
+        DiagonalWipeDirection.topLeftToBottomRight,
+  }) {
+    return DiagonalWipeRevealEffect(direction: direction);
+  }
+
   /// Returns all default built-in effects.
   static List<RevealEffect> all() {
-    return <RevealEffect>[circular(), fade(), slide()];
+    return <RevealEffect>[circular(), fade(), slide(), diagonalWipe()];
   }
 }

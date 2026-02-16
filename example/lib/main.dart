@@ -52,10 +52,7 @@ class _RevealDemoAppState extends State<RevealDemoApp> {
         brightness: Brightness.dark,
       ),
       builder: (context, child) {
-        return RevealScope(
-          config: const RevealConfig(duration: Duration(milliseconds: 560)),
-          child: child ?? const SizedBox.shrink(),
-        );
+        return RevealScope(child: child ?? const SizedBox.shrink());
       },
       home: _buildHome(),
     );
