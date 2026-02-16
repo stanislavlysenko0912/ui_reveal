@@ -151,7 +151,7 @@ class _SimplePageState extends State<SimplePage> {
                         onTap: isSelected
                             ? null
                             : () => dotContext.startReveal(
-                                effect: const FadeRevealEffect(),
+                                effect: RevealEffects.fade(),
                                 onSwitch: () async =>
                                     widget.onPaletteChanged(index),
                               ),
@@ -189,7 +189,7 @@ class _SimplePageState extends State<SimplePage> {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () => context.startReveal(
-          effect: const ScaleRevealEffect(),
+          effect: RevealEffects.scale(),
           onSwitch: () async => setState(() => _isViewA = !_isViewA),
         ),
         child: Padding(

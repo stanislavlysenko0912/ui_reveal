@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../core/reveal_core.dart';
 import '../core/reveal_scope.dart';
-import '../effects/circular_reveal_effect.dart';
+import '../effects/reveal_effects.dart';
 
 /// Utilities for reveal transition geometry.
 extension BuildContextRevealExtension on BuildContext {
@@ -27,7 +27,7 @@ extension BuildContextRevealExtension on BuildContext {
   /// Throws [StateError] when no [RevealScope] exists in the widget tree.
   Future<void> startReveal({
     required Future<void> Function() onSwitch,
-    RevealEffect effect = const CircularRevealEffect(),
+    RevealEffect? effect,
     RevealDirection direction = RevealDirection.reveal,
     Offset? center,
   }) {
@@ -41,7 +41,7 @@ extension BuildContextRevealExtension on BuildContext {
     return controller.start(
       center: center ?? revealCenter,
       onSwitch: onSwitch,
-      effect: effect,
+      effect: effect ?? RevealEffects.circular(),
       direction: direction,
     );
   }

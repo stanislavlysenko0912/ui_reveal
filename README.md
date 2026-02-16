@@ -7,7 +7,7 @@ It is package-agnostic and exposes a minimal API built around `RevealHost`, `Rev
 
 - Host-based snapshot overlay with a clean controller API.
 - Pluggable effects via `RevealEffect` strategy.
-- Built-in effects: `CircularRevealEffect`, `FadeRevealEffect`, `ScaleRevealEffect`.
+- Built-in effects: `RevealEffects.circular()`, `RevealEffects.fade()`, `RevealEffects.scale()`.
 - Fail-fast runtime checks for invalid usage.
 - Fallback path: if snapshot capture fails, `onSwitch` still runs without animation.
 
@@ -66,7 +66,7 @@ Start transition from a widget center:
 ```dart
 await revealController.start(
   center: context.revealCenter,
-  effect: const CircularRevealEffect(),
+  effect: RevealEffects.circular(),
   direction: RevealDirection.reveal,
   onSwitch: () async {
     setState(() {
@@ -85,7 +85,7 @@ await revealController.start(
 ```dart
 await RevealScope.of(context).start(
   center: context.revealCenter,
-  effect: const CircularRevealEffect(),
+  effect: RevealEffects.circular(),
   direction: RevealDirection.reveal,
   onSwitch: () async => setState(() => isDark = !isDark),
 );
@@ -95,7 +95,7 @@ await RevealScope.of(context).start(
 
 ```dart
 await context.startReveal(
-  effect: const CircularRevealEffect(),
+  effect: RevealEffects.circular(),
   direction: RevealDirection.reveal,
   onSwitch: () async => setState(() => isDark = !isDark),
 );
@@ -106,9 +106,11 @@ await context.startReveal(
 Use any built-in effect through the same API:
 
 ```dart
-const CircularRevealEffect();
-const FadeRevealEffect();
-const ScaleRevealEffect();
+RevealEffects.circular();
+RevealEffects.fade();
+RevealEffects.scale();
+RevealEffects.circular(enableEdgeGlow: false);
+RevealEffects.scale(maxScale: 1.12);
 ```
 
 You can add custom effects by implementing `RevealEffect`.
@@ -129,7 +131,7 @@ If you want automatic behavior (`toggle` or `byThemeBrightness`), use
 ```dart
 await controller.start(
   center: context.revealCenter,
-  effect: const CircularRevealEffect(),
+  effect: RevealEffects.circular(),
   direction: RevealDirection.conceal,
   onSwitch: () async => setState(() => isDark = false),
 );
@@ -144,7 +146,7 @@ final direction = RevealDirectionResolver.toggle(
 
 await controller.start(
   center: context.revealCenter,
-  effect: const FadeRevealEffect(),
+  effect: RevealEffects.fade(),
   direction: direction,
   onSwitch: () async => setState(() => isGrid = !isGrid),
 );
@@ -162,7 +164,7 @@ final direction = RevealDirectionResolver.byThemeBrightness(
 
 await controller.start(
   center: context.revealCenter,
-  effect: const ScaleRevealEffect(),
+  effect: RevealEffects.scale(),
   direction: direction,
   onSwitch: () async => setState(() => isDark = !isDark),
 );

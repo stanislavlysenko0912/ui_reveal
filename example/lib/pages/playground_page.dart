@@ -2,14 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:ui_reveal/ui_reveal.dart';
 
 enum _EffectType {
-  circular('Circular', CircularRevealEffect()),
-  fade('Fade', FadeRevealEffect()),
-  scale('Scale', ScaleRevealEffect());
+  circular('Circular'),
+  fade('Fade'),
+  scale('Scale');
 
-  const _EffectType(this.label, this.effect);
+  const _EffectType(this.label);
 
   final String label;
-  final RevealEffect effect;
+
+  RevealEffect get effect {
+    switch (this) {
+      case _EffectType.circular:
+        return RevealEffects.circular();
+      case _EffectType.fade:
+        return RevealEffects.fade();
+      case _EffectType.scale:
+        return RevealEffects.scale();
+    }
+  }
 }
 
 /// Interactive playground with tweakable controls.

@@ -25,12 +25,11 @@ class RealWorldPage extends StatelessWidget {
             builder: (btnContext) {
               return IconButton(
                 onPressed: () {
-                  final direction = RevealDirectionResolver.byThemeBrightness(
-                    fromBrightness: isDark ? Brightness.dark : Brightness.light,
-                    toBrightness: isDark ? Brightness.light : Brightness.dark,
-                  );
                   btnContext.startReveal(
-                    direction: direction,
+                    direction: isDark
+                        ? RevealDirection.reveal
+                        : RevealDirection.conceal,
+                    effect: RevealEffects.circular(),
                     onSwitch: () async => onToggleTheme(),
                   );
                 },

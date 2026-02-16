@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ui_reveal/ui_reveal.dart';
 
+import 'pages/custom_page.dart';
 import 'pages/playground_page.dart';
 import 'pages/real_world_page.dart';
 import 'pages/simple_page.dart';
@@ -72,6 +73,7 @@ class _RevealDemoAppState extends State<RevealDemoApp> {
             paletteIndex: _paletteIndex,
             onPaletteChanged: _setPalette,
           ),
+          CustomPage(isDark: _isDarkTheme, onToggleTheme: _toggleTheme),
           const PlaygroundPage(),
           RealWorldPage(isDark: _isDarkTheme, onToggleTheme: _toggleTheme),
         ],
@@ -84,6 +86,11 @@ class _RevealDemoAppState extends State<RevealDemoApp> {
             icon: Icon(Icons.touch_app_outlined),
             selectedIcon: Icon(Icons.touch_app),
             label: 'Simple',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.auto_fix_high_outlined),
+            selectedIcon: Icon(Icons.auto_fix_high),
+            label: 'Custom',
           ),
           NavigationDestination(
             icon: Icon(Icons.tune_outlined),

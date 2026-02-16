@@ -58,7 +58,7 @@ void main() {
         controller.start(
           center: const Offset(20, 20),
           onSwitch: () async {},
-          effect: const FadeRevealEffect(),
+          effect: RevealEffects.fade(),
         ),
         throwsStateError,
       );
@@ -72,7 +72,7 @@ void main() {
         controller.start(
           center: const Offset(double.nan, 12),
           onSwitch: () async {},
-          effect: const FadeRevealEffect(),
+          effect: RevealEffects.fade(),
         ),
         throwsArgumentError,
       );
@@ -86,7 +86,7 @@ void main() {
       final first = controller.start(
         center: const Offset(24, 24),
         onSwitch: () => gate.future,
-        effect: const FadeRevealEffect(),
+        effect: RevealEffects.fade(),
       );
       await tester.pump();
       await tester.pump();
@@ -95,7 +95,7 @@ void main() {
         controller.start(
           center: const Offset(24, 24),
           onSwitch: () async {},
-          effect: const FadeRevealEffect(),
+          effect: RevealEffects.fade(),
         ),
         throwsStateError,
       );
@@ -115,7 +115,7 @@ void main() {
         onSwitch: () async {
           switchCalls += 1;
         },
-        effect: const FadeRevealEffect(),
+        effect: RevealEffects.fade(),
       );
 
       await tester.pumpWidget(const SizedBox.shrink());
@@ -134,9 +134,9 @@ void main() {
 
       final center = key.currentContext!.revealCenter;
       final effects = <RevealEffect>[
-        const CircularRevealEffect(),
-        const FadeRevealEffect(),
-        const ScaleRevealEffect(),
+        RevealEffects.circular(),
+        RevealEffects.fade(),
+        RevealEffects.scale(),
       ];
 
       for (final effect in effects) {
@@ -211,7 +211,7 @@ void main() {
       );
 
       final transition = key.currentContext!.startReveal(
-        effect: const FadeRevealEffect(),
+        effect: RevealEffects.fade(),
         onSwitch: () async {
           switchCalls += 1;
         },
