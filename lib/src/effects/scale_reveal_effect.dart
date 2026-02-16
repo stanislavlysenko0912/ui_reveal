@@ -58,9 +58,6 @@ class _ScaleRevealPainter extends CustomPainter {
   }
 
   double _calculateOpacity(double progress) {
-    if (context.direction == RevealDirection.conceal) {
-      return progress;
-    }
     return 1 - progress;
   }
 

@@ -177,6 +177,51 @@ void main() {
       expect(center.dx, topLeft.dx + 40);
       expect(center.dy, topLeft.dy + 20);
     });
+
+    testWidgets('startReveal throws without RevealScope', (tester) async {
+      final key = GlobalKey();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: SizedBox(key: key, width: 40)),
+        ),
+      );
+
+      expect(
+        () => key.currentContext!.startReveal(onSwitch: () async {}),
+        throwsStateError,
+      );
+    });
+
+    testWidgets('startReveal works with RevealScope', (tester) async {
+      final key = GlobalKey();
+      var switchCalls = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) {
+            return RevealScope(
+              config: const RevealConfig(duration: Duration.zero),
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
+          home: Scaffold(
+            body: Center(child: SizedBox(key: key, width: 50)),
+          ),
+        ),
+      );
+
+      final transition = key.currentContext!.startReveal(
+        effect: const FadeRevealEffect(),
+        onSwitch: () async {
+          switchCalls += 1;
+        },
+      );
+
+      await tester.pump();
+      await tester.pump();
+      await transition;
+      expect(switchCalls, 1);
+    });
   });
 }
 

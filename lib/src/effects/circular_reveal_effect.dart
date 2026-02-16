@@ -37,29 +37,54 @@ class _CircularRevealPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final maxRadius = _calculateMaxRadius(context.center, size);
     final radius = _calculateRadius(maxRadius);
-    final opacity = _calculateOpacity(radius, maxRadius);
 
-    canvas.saveLayer(Offset.zero & size, Paint());
+    if (context.direction == RevealDirection.conceal) {
+      _paintConceal(canvas, size, radius, maxRadius);
+      return;
+    }
+
+    _paintReveal(canvas, size, radius);
+  }
+
+  void _paintReveal(Canvas canvas, Size size, double radius) {
+    final outerClip = Path()
+      ..fillType = PathFillType.evenOdd
+      ..addRect(Offset.zero & size)
+      ..addOval(Rect.fromCircle(center: context.center, radius: radius));
+
+    canvas.save();
+    canvas.clipPath(outerClip);
     paintImage(
       canvas: canvas,
       rect: Offset.zero & size,
       image: context.snapshotImage,
       fit: BoxFit.cover,
-      colorFilter: ColorFilter.mode(_white(opacity), BlendMode.modulate),
     );
+    canvas.restore();
+  }
 
-    canvas.drawCircle(
-      context.center,
-      radius,
-      Paint()
-        ..blendMode = BlendMode.dstOut
-        ..style = PaintingStyle.fill,
+  void _paintConceal(
+    Canvas canvas,
+    Size size,
+    double radius,
+    double maxRadius,
+  ) {
+    final innerClip = Path()
+      ..addOval(Rect.fromCircle(center: context.center, radius: radius));
+
+    canvas.save();
+    canvas.clipPath(innerClip);
+    paintImage(
+      canvas: canvas,
+      rect: Offset.zero & size,
+      image: context.snapshotImage,
+      fit: BoxFit.cover,
     );
+    canvas.restore();
 
     if (_shouldPaintGlow(radius, maxRadius)) {
       _paintGlow(canvas, radius, maxRadius);
     }
-    canvas.restore();
   }
 
   @override
@@ -80,43 +105,30 @@ class _CircularRevealPainter extends CustomPainter {
   }
 
   double _calculateRadius(double maxRadius) {
-    final progress = context.progress;
+    final progress = context.progress.clamp(0.0, 1.0).toDouble();
     if (context.direction == RevealDirection.conceal) {
-      return maxRadius * (1 - progress);
+      return maxRadius * math.sqrt(1 - progress);
     }
-    return maxRadius * progress;
-  }
-
-  double _calculateOpacity(double radius, double maxRadius) {
-    if (context.direction != RevealDirection.conceal) {
-      return 1;
-    }
-
-    final fadeThreshold = maxRadius * 0.15;
-    if (radius >= fadeThreshold) {
-      return 1;
-    }
-
-    final normalized = (radius / fadeThreshold).clamp(0.0, 1.0).toDouble();
-    return math.pow(normalized, 0.7).toDouble();
+    return maxRadius * math.sqrt(progress);
   }
 
   bool _shouldPaintGlow(double radius, double maxRadius) {
     if (!enableEdgeGlow || context.direction != RevealDirection.conceal) {
       return false;
     }
-    return radius < maxRadius * 0.10;
+    return radius < maxRadius * 0.15;
   }
 
   void _paintGlow(Canvas canvas, double radius, double maxRadius) {
     final glowProgress = 1 - (radius / (maxRadius * 0.10));
-    final alpha = (glowProgress * 0.25).clamp(0.0, 1.0).toDouble();
+    final alpha = (glowProgress * 0.20).clamp(0.0, 1.0).toDouble();
     canvas.drawCircle(
       context.center,
-      radius + 12,
+      radius + 8,
       Paint()
         ..color = _white(alpha)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4,
     );
   }
 

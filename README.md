@@ -14,11 +14,13 @@ It is package-agnostic and exposes a minimal API built around `RevealHost`, `Rev
 ## Public API
 
 - `RevealHost`
+- `RevealScope` (high-level wrapper with optional auto controller)
 - `RevealConfig`
 - `RevealController.start(...)`
 - `RevealEffect` / `RevealEffectContext`
 - `RevealDirection` (`reveal`, `conceal`)
 - `BuildContext.revealCenter`
+- `BuildContext.startReveal(...)` (convenience)
 
 ## Getting Started
 
@@ -48,6 +50,17 @@ MaterialApp(
 );
 ```
 
+For minimal setup, use `RevealScope`:
+
+```dart
+MaterialApp(
+  builder: (context, child) => RevealScope(
+    child: child ?? const SizedBox.shrink(),
+  ),
+  home: HomePage(),
+);
+```
+
 Start transition from a widget center:
 
 ```dart
@@ -60,6 +73,31 @@ await revealController.start(
       isDarkTheme = !isDarkTheme;
     });
   },
+);
+```
+
+## API Styles
+
+`RevealScope` gives you two ways to trigger transitions.
+
+### Style A: `RevealScope.of(context)` (recommended)
+
+```dart
+await RevealScope.of(context).start(
+  center: context.revealCenter,
+  effect: const CircularRevealEffect(),
+  direction: RevealDirection.reveal,
+  onSwitch: () async => setState(() => isDark = !isDark),
+);
+```
+
+### Style B: `context.startReveal(...)` (shortcut)
+
+```dart
+await context.startReveal(
+  effect: const CircularRevealEffect(),
+  direction: RevealDirection.reveal,
+  onSwitch: () async => setState(() => isDark = !isDark),
 );
 ```
 

@@ -8,6 +8,7 @@ export 'src/core/reveal_core.dart'
         RevealEffect,
         RevealEffectContext,
         RevealHost;
+export 'src/core/reveal_scope.dart';
 export 'src/effects/circular_reveal_effect.dart';
 export 'src/effects/fade_reveal_effect.dart';
 export 'src/effects/scale_reveal_effect.dart';

@@ -41,11 +41,7 @@ class _FadeRevealPainter extends CustomPainter {
   }
 
   double _calculateOpacity() {
-    final progress = context.progress;
-    if (context.direction == RevealDirection.conceal) {
-      return progress;
-    }
-    return 1 - progress;
+    return 1 - context.progress;
   }
 
   Color _white(double opacity) {
