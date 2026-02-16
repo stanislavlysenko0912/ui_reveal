@@ -1,0 +1,9 @@
+{
+	"dart.flutterSdkPath": ".fvm/flutter_sdk",
+	"dart.lineLength": 80,
+	"editor.defaultFormatter": "Dart-Code.dart-code",
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit",
+		"source.organizeImports": "explicit"
+	}
+}

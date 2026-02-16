@@ -1,8 +1,14 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
 library;
 
-export 'src/ui_reveal_base.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/core/reveal_core.dart'
+    show
+        RevealConfig,
+        RevealController,
+        RevealDirection,
+        RevealEffect,
+        RevealEffectContext,
+        RevealHost;
+export 'src/effects/circular_reveal_effect.dart';
+export 'src/effects/fade_reveal_effect.dart';
+export 'src/effects/scale_reveal_effect.dart';
+export 'src/helpers/build_context_reveal_extension.dart';

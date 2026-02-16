@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "[pre-commit] Collecting staged Dart files..."
+staged_dart_output="$(git diff --cached --name-only --diff-filter=ACMR | rg '\.dart$' || true)"
+staged_dart_files=()
+
+if [ -n "$staged_dart_output" ]; then
+  while IFS= read -r file; do
+    staged_dart_files+=("$file")
+  done <<EOF
+$staged_dart_output
+EOF
+fi
+
+if ((${#staged_dart_files[@]} > 0)); then
+  echo "[pre-commit] Formatting staged Dart files..."
+  fvm dart format "${staged_dart_files[@]}"
+  git add "${staged_dart_files[@]}"
+else
+  echo "[pre-commit] No staged Dart files found."
+fi
+
+echo "[pre-commit] Running static analysis..."
+make analyze
+

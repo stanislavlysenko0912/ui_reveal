@@ -1,39 +1,87 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# ui_reveal
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages). 
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages). 
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+`ui_reveal` is a Flutter package that animates UI switches using snapshot-based reveal effects.
+It is package-agnostic and exposes a minimal API built around `RevealHost`, `RevealController`, and `RevealEffect`.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Host-based snapshot overlay with a clean controller API.
+- Pluggable effects via `RevealEffect` strategy.
+- Built-in effects: `CircularRevealEffect`, `FadeRevealEffect`, `ScaleRevealEffect`.
+- Fail-fast runtime checks for invalid usage.
+- Fallback path: if snapshot capture fails, `onSwitch` still runs without animation.
 
-## Getting started
+## Public API
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+- `RevealHost`
+- `RevealConfig`
+- `RevealController.start(...)`
+- `RevealEffect` / `RevealEffectContext`
+- `RevealDirection` (`reveal`, `conceal`)
+- `BuildContext.revealCenter`
 
-## Usage
+## Getting Started
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+Add dependency:
 
-```dart
-const like = 'sample';
+```yaml
+dependencies:
+  ui_reveal: ^1.0.0
 ```
 
-## Additional information
+Wrap your app content with `RevealHost`:
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+```dart
+final revealController = RevealController();
+
+MaterialApp(
+  builder: (context, child) {
+    return RevealHost(
+      controller: revealController,
+      config: const RevealConfig(
+        duration: Duration(milliseconds: 560),
+        curve: Curves.easeInOut,
+      ),
+      child: child ?? const SizedBox.shrink(),
+    );
+  },
+);
+```
+
+Start transition from a widget center:
+
+```dart
+await revealController.start(
+  center: context.revealCenter,
+  effect: const CircularRevealEffect(),
+  direction: RevealDirection.reveal,
+  onSwitch: () async {
+    setState(() {
+      isDarkTheme = !isDarkTheme;
+    });
+  },
+);
+```
+
+## Effects
+
+Use any built-in effect through the same API:
+
+```dart
+const CircularRevealEffect();
+const FadeRevealEffect();
+const ScaleRevealEffect();
+```
+
+You can add custom effects by implementing `RevealEffect`.
+
+## Runtime Guarantees
+
+- `RevealController.start` throws `ArgumentError` when `center` is non-finite.
+- `RevealController.start` throws `StateError` when called during an active transition.
+- `RevealController.start` throws `StateError` when controller is not attached to `RevealHost`.
+- `onSwitch` is called exactly once per `start` call.
+
+## Example
+
+See a complete integration sample in `example/lib/main.dart`.
