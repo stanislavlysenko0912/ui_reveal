@@ -4,11 +4,11 @@ Snapshot-based UI transitions for Flutter with pluggable reveal effects.
 Most often used to bring a little magic to your theme switching 🙌
 
 <p align="center">
-  <img src="doc/circular.gif" width="150" alt="Circular">
-  <img src="doc/slide.gif" width="150" alt="Slide">
-  <img src="doc/diagonal.gif" width="150" alt="Diagonal">
-  <img src="doc/liquid.gif" width="150" alt="Liquid">
-  <img src="doc/fade.gif" width="150" alt="Fade">
+  <img src="https://raw.githubusercontent.com/stanislavlysenko0912/ui_reveal/main/doc/circular.gif" width="150" alt="Circular">
+  <img src="https://raw.githubusercontent.com/stanislavlysenko0912/ui_reveal/main/doc/slide.gif" width="150" alt="Slide">
+  <img src="https://raw.githubusercontent.com/stanislavlysenko0912/ui_reveal/main/doc/diagonal.gif" width="150" alt="Diagonal">
+  <img src="https://raw.githubusercontent.com/stanislavlysenko0912/ui_reveal/main/doc/liquid.gif" width="150" alt="Liquid">
+  <img src="https://raw.githubusercontent.com/stanislavlysenko0912/ui_reveal/main/doc/fade.gif" width="150" alt="Fade">
 </p>
 
 ## Table of Contents
@@ -144,7 +144,7 @@ await context.startReveal(
 See custom transition implementation example in
 [`example/lib/pages/custom_page.dart#L122`](https://github.com/stanislavlysenko0912/ui_reveal/blob/main/example/lib/pages/custom_page.dart#L122)
 
-<img src="doc/custom.gif" width="150" alt="Circular">
+<img src="https://raw.githubusercontent.com/stanislavlysenko0912/ui_reveal/main/doc/custom.gif" width="150" alt="Circular">
 
 ## Theme Switching Notes
 
