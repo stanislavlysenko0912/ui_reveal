@@ -1,0 +1,11 @@
+AGENTS.md
+old/
+.DS_Store
+.claude/
+.dart_tool/
+.githooks/
+.gitignore
+.vscode/
+build/
+coverage/
+pubspec.lock
