@@ -3,6 +3,14 @@ Snapshot-based UI transitions for Flutter with pluggable reveal effects.
 `ui_reveal` captures the previous frame, runs your UI switch exactly once, and animates the transition using an effect strategy.</br>
 Most often used to bring a little magic to your theme switching 🙌
 
+<p align="center">
+  <img src="doc/circular.gif" width="150" alt="Circular">
+  <img src="doc/slide.gif" width="150" alt="Slide">
+  <img src="doc/diagonal.gif" width="150" alt="Diagonal">
+  <img src="doc/liquid.gif" width="150" alt="Liquid">
+  <img src="doc/fade.gif" width="150" alt="Fade">
+</p>
+
 ## Table of Contents
 
 - [Installation](#installation)
@@ -50,7 +58,7 @@ await RevealScope.of(context).start(
 
 ## API Styles
 
-### Style A (recommended): `RevealScope.of(context)`
+### Style A: `RevealScope.of(context)`
 
 ```dart
 MaterialApp(
