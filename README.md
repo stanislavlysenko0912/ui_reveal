@@ -18,6 +18,7 @@ Most often used to bring a little magic to your theme switching 🙌
 - [API Styles](#api-styles)
 - [Built-in Effects](#built-in-effects)
 - [Direction Handling](#direction-handling)
+- [Center Selection](#center-selection)
 - [Custom Effects](#custom-effects)
 - [Theme Switching Notes](#theme-switching-notes)
 - [FAQ](#faq)
@@ -119,10 +120,31 @@ await controller.start(
 );
 ```
 
+## Center Selection
+
+`context.startReveal(...)` uses the center of the `BuildContext` where it is
+called.
+
+- If called from a screen/card context, the reveal starts near that widget.
+- If called from a button context (for example via `Builder`), the reveal
+  starts from that button.
+
+You can override this by passing `center` explicitly:
+
+```dart
+await context.startReveal(
+  center: const Offset(24, 80),
+  effect: RevealEffects.circular(),
+  onSwitch: () async => setState(() => isDark = !isDark),
+);
+```
+
 ## Custom Effects
 
-See real custom transition implementation in
-[`example/lib/pages/custom_page.dart`](example/lib/pages/custom_page.dart) (`_BlindsRevealEffect`).
+See custom transition implementation example in
+[`example/lib/pages/custom_page.dart#L122`](https://github.com/stanislavlysenko0912/ui_reveal/blob/main/example/lib/pages/custom_page.dart#L122)
+
+<img src="doc/custom.gif" width="150" alt="Circular">
 
 ## Theme Switching Notes
 
