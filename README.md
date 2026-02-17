@@ -144,7 +144,7 @@ await context.startReveal(
 See custom transition implementation example in
 [`example/lib/pages/custom_page.dart#L122`](https://github.com/stanislavlysenko0912/ui_reveal/blob/main/example/lib/pages/custom_page.dart#L122)
 
-<img src="https://raw.githubusercontent.com/stanislavlysenko0912/ui_reveal/main/doc/custom.gif" width="150" alt="Circular">
+<img src="https://raw.githubusercontent.com/stanislavlysenko0912/ui_reveal/main/doc/custom.gif" width="150" alt="Custom">
 
 ## Theme Switching Notes
 
