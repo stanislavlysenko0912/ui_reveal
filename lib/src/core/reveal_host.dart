@@ -160,8 +160,7 @@ class _RevealHostState extends State<RevealHost>
     }
 
     final renderObject = _repaintBoundaryKey.currentContext?.findRenderObject();
-    if (renderObject is! RenderRepaintBoundary ||
-        renderObject.debugNeedsPaint) {
+    if (renderObject is! RenderRepaintBoundary) {
       return null;
     }
 

@@ -1,6 +1,6 @@
 name: ui_reveal
 description: Package-agnostic reveal transition host and effects for Flutter.
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/stanislavlysenko0912/ui_reveal
 homepage: https://github.com/stanislavlysenko0912/ui_reveal
 issue_tracker: https://github.com/stanislavlysenko0912/ui_reveal/issues
